@@ -39,5 +39,6 @@ model = DQN(
     exploration_fraction=0.05,
     exploration_final_eps=0.01,
     verbose=1,
+    device="cuda"
 )
 model.learn(total_timesteps=100000)
