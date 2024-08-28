@@ -200,16 +200,8 @@ class TrafficSignal:
         self.last_measure = ts_wait
         return reward
 
-    def get_lanes_co2_emission(self):
-        total_co2_emission = 0
-        for veh_id in self.sumo.vehicle.getIDList():
-            total_co2_emission += self.sumo.vehicle.getCO2Emission(veh_id)
-
-        reward = -total_co2_emission
-        return reward
-
     def get_lanes_co2_emission_to_list(self):
-        """각 차선의 CO2 배출량을 리스트로 반환합니다."""
+        # print("get_lanes_co2_emission_to_list")
         co2_emissions = []
         for lane in self.lanes:
             lane_co2 = 0.0
@@ -329,6 +321,5 @@ class TrafficSignal:
         "average-speed": _average_speed_reward,
         "queue": _queue_reward,
         "pressure": _pressure_reward,
-        "co2": get_lanes_co2_emission
     }
 

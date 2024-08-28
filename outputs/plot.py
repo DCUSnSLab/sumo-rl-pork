@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+plt.rcParams['text.usetex'] = False
 
 sns.set(
     style="darkgrid",
