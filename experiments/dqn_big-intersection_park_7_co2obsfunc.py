@@ -20,14 +20,6 @@ class CustomSumoEnvironment(SumoEnvironment):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def _compute_reward(self):
-        total_co2_emission = 0
-        for veh_id in traci.vehicle.getIDList():
-            total_co2_emission += traci.vehicle.getCO2Emission(veh_id)
-
-        reward = -total_co2_emission
-        return reward
-
     def _get_system_info(self):
         vehicles = self.sumo.vehicle.getIDList()
         speeds = [self.sumo.vehicle.getSpeed(vehicle) for vehicle in vehicles]
@@ -52,7 +44,13 @@ class EveryStepCallback(BaseCallback):
             print(f"Step: {self.num_timesteps}, Reward: {self.locals['rewards'][-1]}")
         return True
 
+def get_lanes_co2_emission_reward(cls):
+    total_co2_emission = 0
+    for veh_id in cls.sumo.vehicle.getIDList():
+        total_co2_emission += cls.sumo.vehicle.getCO2Emission(veh_id)
 
+    reward = -total_co2_emission
+    return reward
 
 # 현재 시스템 시간을 가져와 시작 시간으로 저장
 start_time = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -68,7 +66,7 @@ os.makedirs(output_folder, exist_ok=True)
 env = CustomSumoEnvironment(
     net_file="test.net_mergy.xml",
     single_agent=True,
-    route_file="generated_flows_am.xml",
+    route_file="generated_flows_pm.xml",
     out_csv_name=f"{output_folder}/dqn_{start_time}.csv",
     use_gui=True,
     num_seconds=num_seconds,

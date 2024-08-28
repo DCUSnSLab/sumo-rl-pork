@@ -6,6 +6,7 @@ from stable_baselines3.dqn.dqn import DQN
 from stable_baselines3.common.callbacks import BaseCallback  # 콜백 클래스 임포트
 import traci
 from sumo_rl import SumoEnvironment
+from sumo_rl.environment.observations import CO2ObservationFunction
 
 if "SUMO_HOME" in os.environ:
     tools = os.path.join(os.environ["SUMO_HOME"], "tools")
@@ -42,7 +43,7 @@ class EveryStepCallback(BaseCallback):
 start_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 # num_seconds 값을 정의
-num_seconds = 11000
+num_seconds = 3500
 
 # 모델을 저장할 폴더 경로 생성
 output_folder = f"outputs/dqn_{start_time}_numsec_{num_seconds}"
@@ -58,7 +59,8 @@ env = CustomSumoEnvironment(
     num_seconds=num_seconds,
     yellow_time=4,
     min_green=5,
-    max_green=60
+    max_green=60,
+    observation_class=CO2ObservationFunction
 )
 
 model = DQN(

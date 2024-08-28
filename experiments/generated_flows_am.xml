@@ -40,12 +40,13 @@
   <route id="Wb_s" edges="E44 E43 E41 E40 E39 E74 E77 E38 E37 E9 E10 E11 E12 E14 E15 E16 E17 E18"/>
   
 
-  <vType id="car" vClass="passenger"/>
-  <vType id="hov" vClass="hov"/>
-  <vType id="bus" vClass="bus"/>
-  <vType id="delivery" vClass="delivery"/>
-  <vType id="truck" vClass="truck"/>
-  <vType id="trailer" vClass="trailer"/>
+  <vType id="car" vClass="passenger" desiredMaxSpeed="20" maxSpeed="20" />
+  <vType id="hov" vClass="hov" desiredMaxSpeed="20" maxSpeed="20"/>
+  <vType id="bus" vClass="bus" desiredMaxSpeed="20" maxSpeed="20"/>
+  <vType id="delivery" vClass="delivery" desiredMaxSpeed="20" maxSpeed="20"/>
+  <vType id="truck" vClass="truck" desiredMaxSpeed="20" maxSpeed="20"/>
+  <vType id="trailer" vClass="trailer" desiredMaxSpeed="20" maxSpeed="20"/>
+
   <flow id="f_0" begin="0" end="900" departLane="1" route="Eb_l" number="27" type="car"/>
   <flow id="f_1" begin="0" end="900" departLane="1" route="Eb_l" number="4" type="delivery"/>
   <flow id="f_2" begin="0" end="900" departLane="1" route="Eb_l" number="18" type="trailer"/>

@@ -200,6 +200,25 @@ class TrafficSignal:
         self.last_measure = ts_wait
         return reward
 
+    def get_lanes_co2_emission(self):
+        total_co2_emission = 0
+        for veh_id in self.sumo.vehicle.getIDList():
+            total_co2_emission += self.sumo.vehicle.getCO2Emission(veh_id)
+
+        reward = -total_co2_emission
+        return reward
+
+    def get_lanes_co2_emission_to_list(self):
+        """각 차선의 CO2 배출량을 리스트로 반환합니다."""
+        co2_emissions = []
+        for lane in self.lanes:
+            lane_co2 = 0.0
+            # 해당 차선에 있는 모든 차량의 CO2 배출량을 합산
+            for vehicle_id in self.sumo.lane.getLastStepVehicleIDs(lane):
+                lane_co2 += self.sumo.vehicle.getCO2Emission(vehicle_id)
+            co2_emissions.append(lane_co2)
+        return co2_emissions
+
     def _observation_fn_default(self):
         phase_id = [1 if self.green_phase == i else 0 for i in range(self.num_green_phases)]  # one-hot encoding
         min_green = [0 if self.time_since_last_phase_change < self.min_green + self.yellow_time else 1]
@@ -310,14 +329,6 @@ class TrafficSignal:
         "average-speed": _average_speed_reward,
         "queue": _queue_reward,
         "pressure": _pressure_reward,
+        "co2": get_lanes_co2_emission
     }
 
-    def get_lanes_co2_emission(self):
-        """각 차선의 CO2 배출량을 반환합니다."""
-        co2_emissions = []
-        for lane in self.lanes:
-            lane_co2 = 0.0
-            for vehicle_id in self.sumo.lane.getLastStepVehicleIDs(lane):
-                lane_co2 += self.sumo.vehicle.getCO2Emission(vehicle_id)
-            co2_emissions.append(lane_co2)
-        return co2_emissions
