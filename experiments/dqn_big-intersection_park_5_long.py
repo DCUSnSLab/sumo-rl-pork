@@ -85,8 +85,9 @@ callback = EveryStepCallback(verbose=1)
 for episode in range(1, num_episodes + 1):
     env.reset()
     model.learn(total_timesteps=timesteps_per_episode, reset_num_timesteps=False, callback=callback)
-
+    model.act()
     # 모델 파일을 생성한 폴더에 저장
     model_path = f"{output_folder}/dqn_model_episode_{episode}.zip"
     model.save(model_path)
+
     print(f"Episode {episode}: Model saved as {model_path}")

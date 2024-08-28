@@ -30,17 +30,31 @@ class CustomSumoEnvironment(SumoEnvironment):
         reward = -total_co2_emission
         return reward
 
+    def _get_system_info(self):
+        vehicles = self.sumo.vehicle.getIDList()
+        speeds = [self.sumo.vehicle.getSpeed(vehicle) for vehicle in vehicles]
+        waiting_times = [self.sumo.vehicle.getWaitingTime(vehicle) for vehicle in vehicles]
+        co2 = [self.sumo.vehicle.getCO2Emission(vehicle) for vehicle in vehicles]
+        return {
+            # In SUMO, a vehicle is considered halting if its speed is below 0.1 m/s
+            "system_total_co2": sum(co2),
+            "system_total_stopped": sum(int(speed < 0.1) for speed in speeds),
+            "system_total_waiting_time": sum(waiting_times),
+            "system_mean_waiting_time": 0.0 if len(vehicles) == 0 else np.mean(waiting_times),
+            "system_mean_speed": 0.0 if len(vehicles) == 0 else np.mean(speeds),
+        }
+
 
 env = CustomSumoEnvironment(
     net_file="test.net_mergy.xml",
     single_agent=True,
-    route_file="generated_flows_am.xml",
+    route_file="generated_flows_pm.xml",
     out_csv_name="outputs/big-intersection/dqn",
-    use_gui=True,
-    num_seconds=2500,
+    use_gui=False,
+    num_seconds=1000,
     yellow_time=4,
     min_green=5,
-    max_green=60
+    max_green=120
 )
 
 model = DQN(
@@ -61,9 +75,12 @@ total_timesteps = 100000
 timesteps_per_episode = 1000
 num_episodes = total_timesteps // timesteps_per_episode
 
+
+
 for episode in range(1, num_episodes + 1):
     env.reset()
     model.learn(total_timesteps=timesteps_per_episode, reset_num_timesteps=False)
     model_path = f"dqn_model_episode_{episode}.zip"
     model.save(model_path)
+    env.save_csv(episode)
     print(f"Episode {episode}: Model saved as {model_path}")
