@@ -311,3 +311,13 @@ class TrafficSignal:
         "queue": _queue_reward,
         "pressure": _pressure_reward,
     }
+
+    def get_lanes_co2_emission(self):
+        """각 차선의 CO2 배출량을 반환합니다."""
+        co2_emissions = []
+        for lane in self.lanes:
+            lane_co2 = 0.0
+            for vehicle_id in self.sumo.lane.getLastStepVehicleIDs(lane):
+                lane_co2 += self.sumo.vehicle.getCO2Emission(vehicle_id)
+            co2_emissions.append(lane_co2)
+        return co2_emissions
