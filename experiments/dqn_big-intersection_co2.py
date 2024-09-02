@@ -98,50 +98,43 @@ class EveryStepCallback(BaseCallback):
 class LearningManager(RunSimulation):
     def __init__(self):
         super().__init__(Config_SUMO, 'RL_DQL', isExternalSignal=True)
-        self.num_seconds = 11700
+        self.num_seconds = 2000
         self.start_time = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.env = CustomSumoEnvironment(
             net_file=self.config.scenario_file,
             single_agent=True,
             route_file=self.config.route_file,
-            use_gui=True,
-            num_seconds=self.num_seconds,
+            use_gui=False,
+            num_seconds=3600,
             yellow_time=4,
-            min_green=5,
+            min_green=15,
             max_green=self.config.max_green,
-            sumo_seed=1,
-            observation_class=CO2ObservationFunction,
+            sumo_seed="random",
             simInfra=self.getInfra()
         )
 
         self.model = DQN(
             env=self.env,
             policy="MlpPolicy",
-            learning_rate=3e-3,
+            learning_rate=1e-3,
             learning_starts=0,
             buffer_size=50000,
             train_freq=1,
             target_update_interval=500,
-            exploration_initial_eps=0.7,
             exploration_fraction=0.05,
-            exploration_final_eps=0.3,
+            exploration_final_eps=0.01,
             verbose=1,
-            device="cuda"
+            device="cpu"
         )
 
-        self.output_name = f"dqn_net_{self.config.scenario_file}_route_{self.config.route_file}_numsec_{self.num_seconds}_maxgreen_{self.config.max_green}"
-        self.output_folder = f"outputs/{self.output_name}"
-        os.makedirs(self.output_folder, exist_ok=True)
-
-        self.output_folder = f"outputs/dqn_{self.start_time}_numsec_{self.num_seconds}"
-        os.makedirs(self.output_folder, exist_ok=True)
+        self.model.learn(total_timesteps=100000)
 
     def preinit(self):
         pass
 
     def run_simulation(self):
         total_timesteps = 100000
-        timesteps_per_episode = int(11700 / 5)
+        timesteps_per_episode = int(2000 / 5)
         num_episodes = total_timesteps // timesteps_per_episode
 
         callback = EveryStepCallback(verbose=1)

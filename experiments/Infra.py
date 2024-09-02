@@ -16,6 +16,8 @@ class Config_SUMO:
     scenario_file = "test.net_mergy.xml"
     route_file = "generated_flows_pm.xml"
 
+    max_green = 120
+
     sumoBinary = r'C:/Program Files (x86)/Eclipse/Sumo/bin/sumo-gui'
 
 class Direction(Enum):

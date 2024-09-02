@@ -104,7 +104,7 @@ class LearningManager(RunSimulation):
             net_file=self.config.scenario_file,
             single_agent=True,
             route_file=self.config.route_file,
-            use_gui=True,
+            use_gui=False,
             num_seconds=self.num_seconds,
             yellow_time=4,
             min_green=5,
@@ -117,7 +117,7 @@ class LearningManager(RunSimulation):
         self.model = DQN(
             env=self.env,
             policy="MlpPolicy",
-            learning_rate=3e-3,
+            learning_rate=4e-3,
             learning_starts=0,
             buffer_size=50000,
             train_freq=1,
@@ -126,14 +126,13 @@ class LearningManager(RunSimulation):
             exploration_fraction=0.05,
             exploration_final_eps=0.3,
             verbose=1,
-            device="cuda"
+            device="cpu"
         )
 
-        self.output_name = f"dqn_net_{self.config.scenario_file}_route_{self.config.route_file}_numsec_{self.num_seconds}_maxgreen_{self.config.max_green}"
-        self.output_folder = f"outputs/{self.output_name}"
-        os.makedirs(self.output_folder, exist_ok=True)
+        start_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        self.output_folder = f"outputs/dqn_{self.start_time}_numsec_{self.num_seconds}"
+        self.output_name = f"dqn_net_{self.config.scenario_file}_route_{self.config.route_file}_numsec_{self.num_seconds}_maxgreen_{self.config.max_green}"
+        self.output_folder = f"outputs/{start_time}_{self.output_name}"
         os.makedirs(self.output_folder, exist_ok=True)
 
     def preinit(self):
